@@ -73,7 +73,7 @@ class HomePage extends StatelessWidget {
                 child: (model.image == null)
                     ? Image(image: AssetImage('assets/no-image.png'))
                     : FadeInImage(
-                        placeholder: AssetImage('assets/search.png'),
+                        placeholder: AssetImage('assets/loading.gif'),
                         image: NetworkImage(model.image),
                         height: 150.0,
                         fit: BoxFit.cover)),

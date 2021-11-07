@@ -22,9 +22,10 @@ class TaskFormPageState extends State<TaskFormPage> {
   bool _saving = false;
 
   final _addFormKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final _titleTaskController = TextEditingController(text: '');
-  final _descriptionTaskController = TextEditingController(text: '');
+  final _titleTaskController = new TextEditingController(text: '');
+  final _descriptionTaskController = new TextEditingController(text: '');
 
   File imagePhoto;
 
@@ -39,6 +40,7 @@ class TaskFormPageState extends State<TaskFormPage> {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Nueva Tarea'),
         centerTitle: true,
@@ -93,7 +95,6 @@ class TaskFormPageState extends State<TaskFormPage> {
 
   Widget _titleInput() {
     return TextFormField(
-        // initialValue: taskModel.title,
         controller: _titleTaskController,
         textCapitalization: TextCapitalization.sentences,
         decoration: const InputDecoration(
@@ -109,7 +110,6 @@ class TaskFormPageState extends State<TaskFormPage> {
 
   Widget _descriptionInput() {
     return TextFormField(
-        // initialValue: taskModel.description,
         controller: _descriptionTaskController,
         maxLines: 8,
         textCapitalization: TextCapitalization.sentences,
@@ -148,7 +148,7 @@ class TaskFormPageState extends State<TaskFormPage> {
                 ListTile(
                     title: Text('Galeria'),
                     onTap: () {
-                      ImagePicker().getImage(source: ImageSource.gallery);
+                      _choosePhoto();
                       Navigator.of(context).pop();
                     }),
                 ListTile(
@@ -166,7 +166,7 @@ class TaskFormPageState extends State<TaskFormPage> {
 
   Widget _submitBtn() {
     return RaisedButton(
-        onPressed: _submitTask,
+        onPressed: (_saving) ? null : _submitTask,
         child: Text('Guardar', style: TextStyle(color: Colors.white)),
         color: Colors.indigo,
         padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 130.0),
@@ -178,6 +178,16 @@ class TaskFormPageState extends State<TaskFormPage> {
     final picker = ImagePicker();
     final imageFile =
         await picker.getImage(source: ImageSource.camera, maxWidth: 300);
+
+    setState(() {
+      imagePhoto = File(imageFile.path);
+    });
+  }
+
+  Future<void> _choosePhoto() async {
+    final picker = ImagePicker();
+    final imageFile =
+        await picker.getImage(source: ImageSource.gallery, maxWidth: 300);
 
     setState(() {
       imagePhoto = File(imageFile.path);
@@ -201,6 +211,14 @@ class TaskFormPageState extends State<TaskFormPage> {
       taskProvider.updateTask(taskModel);
     }
 
+    _showMessage('Tarea Guardada!');
     Navigator.pop(context);
+  }
+
+  void _showMessage(String msg) {
+    final snackbar =
+        SnackBar(content: Text(msg), duration: Duration(milliseconds: 2000));
+
+    _scaffoldKey.currentState.showSnackBar(snackbar);
   }
 }
