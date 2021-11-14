@@ -39,23 +39,18 @@ class TaskFormPageState extends State<TaskFormPage> {
       taskModel = taskData;
     }
 
+    Future goToDraw() {
+      return Navigator.pushNamed(context, 'paintingCustom');
+    }
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Nueva Tarea'),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.photo_camera_rounded),
-        //     onPressed: _takePhoto,
-        //     tooltip: 'Usar Camara',
-        //   ),
-        //   IconButton(
-        //     icon: Icon(Icons.photo_rounded),
-        //     onPressed: _selectPhoto,
-        //     tooltip: 'Usar Galeria',
-        //   ),
-        // ],
+        actions: [
+          IconButton(icon: Icon(Icons.edit), onPressed: goToDraw),
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -80,6 +75,12 @@ class TaskFormPageState extends State<TaskFormPage> {
           ),
         ),
       ),
+      // floatingActionButton: AnimatedFloatingActionButton(
+      //   fabButtons: fabOption(),
+      //   colorStartAnimation: Colors.blue,
+      //   colorEndAnimation: Colors.cyan,
+      //   animatedIconData: AnimatedIcons.menu_close,
+      // ),
     );
   }
 

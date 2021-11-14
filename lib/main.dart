@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:odespratask/pages/home.dart';
+import 'package:odespratask/pages/mycustomdraw.dart';
 import 'package:odespratask/pages/taskdetail.dart';
 import 'package:odespratask/pages/taskformpage.dart';
 import 'package:odespratask/pages/tasklistpage.dart';
@@ -18,7 +19,8 @@ class OdespraTask extends StatelessWidget {
         'home': (BuildContext context) => HomePage(),
         // 'task': (BuildContext context) => TaskListPage(),
         'taskdetail': (BuildContext context) => TaskDetail(),
-        'newtask': (BuildContext context) => TaskFormPage()
+        'newtask': (BuildContext context) => TaskFormPage(),
+        'paintingCustom': (BuildContext context) => MyCustomDrawPage()
       },
     );
   }

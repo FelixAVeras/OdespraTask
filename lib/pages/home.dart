@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:odespratask/models/Task.dart';
-import 'package:odespratask/pages/taskformpage.dart';
-import 'package:odespratask/pages/tasklistpage.dart';
+// import 'package:odespratask/pages/taskformpage.dart';
+// import 'package:odespratask/pages/tasklistpage.dart';
 import 'package:odespratask/providers/taskprovider.dart';
 
 class HomePage extends StatelessWidget {
   final taskProvider = new TaskProvider();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +14,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('ODESPRA Task'),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //       icon: Icon(Icons.add),
-        //       tooltip: 'Nueva Tarea',
-        //       onPressed: () {
-        //         Navigator.pushNamed(context, 'newtask');
-        //       })
-        // ],
       ),
-      // body: TaskListPage(),
       body: _taskList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -42,10 +34,23 @@ class HomePage extends StatelessWidget {
           if (snapshot.hasData) {
             final tasks = snapshot.data;
 
-            return ListView.builder(
-                padding: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-                itemCount: tasks.length,
-                itemBuilder: (context, i) => taskItem(context, tasks[i]));
+            return RefreshIndicator(
+                child: ListView.builder(
+                    padding: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, i) => taskItem(context, tasks[i]),
+                    physics: const AlwaysScrollableScrollPhysics()),
+                onRefresh: () {
+                  return Future.delayed(Duration(seconds: 1));
+                  () {
+                    _scaffoldKey.currentState.showSnackBar(SnackBar(
+                        content: const Text('Lista de tareas actualizada')));
+                  };
+                });
+            // return ListView.builder(
+            //     padding: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+            //     itemCount: tasks.length,
+            //     itemBuilder: (context, i) => taskItem(context, tasks[i]));
           } else {
             return Center(
               child: Container(
