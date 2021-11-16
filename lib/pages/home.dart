@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:odespratask/models/Task.dart';
-// import 'package:odespratask/pages/taskformpage.dart';
-// import 'package:odespratask/pages/tasklistpage.dart';
 import 'package:odespratask/providers/taskprovider.dart';
+
+class DrawingArea {
+  Offset point;
+  Paint areaPaint;
+
+  DrawingArea({this.point, this.areaPaint});
+}
 
 class HomePage extends StatelessWidget {
   final taskProvider = new TaskProvider();

@@ -24,25 +24,25 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
   void selectColor() {
     showDialog(
         context: context,
-        child: AlertDialog(
-          title: Text('Elegir Color'),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-                pickerColor: selectedColor,
-                onColorChanged: (color) {
-                  this.setState(() {
-                    selectedColor = color;
-                  });
-                }),
-          ),
-          actions: [
-            FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Cerrar'))
-          ],
-        ));
+        builder: (context) => AlertDialog(
+              title: Text('Elegir Color'),
+              content: SingleChildScrollView(
+                child: BlockPicker(
+                    pickerColor: selectedColor,
+                    onColorChanged: (color) {
+                      this.setState(() {
+                        selectedColor = color;
+                      });
+                    }),
+              ),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cerrar'))
+              ],
+            ));
   }
 
   @override
@@ -59,9 +59,9 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                  Color.fromRGBO(17, 32, 168, 1.0),
-                  Color.fromRGBO(25, 33, 190, 1.0),
-                  Color.fromRGBO(34, 34, 211, 1.0)
+                  Color.fromRGBO(240, 245, 245, 1.0),
+                  Color.fromRGBO(240, 245, 245, 1.0),
+                  Color.fromRGBO(240, 245, 245, 1.0)
                 ])),
           ),
           Center(
