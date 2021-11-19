@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:odespratask/models/Task.dart';
+import 'package:odespratask/pages/mycustomdraw.dart';
 import 'package:odespratask/providers/taskprovider.dart';
+import 'package:provider/provider.dart';
 
 class TaskFormPage extends StatefulWidget {
   TaskFormPage();
@@ -40,7 +42,12 @@ class TaskFormPageState extends State<TaskFormPage> {
     }
 
     Future goToDraw() {
-      return Navigator.pushNamed(context, 'paintingCustom');
+      // return Navigator.pushNamed(context, 'paintingCustom');
+      return Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  MyCustomDrawPage(imagePhoto: imagePhoto)));
     }
 
     return Scaffold(
@@ -49,7 +56,10 @@ class TaskFormPageState extends State<TaskFormPage> {
         title: Text('Nueva Tarea'),
         centerTitle: true,
         actions: [
-          IconButton(icon: Icon(Icons.edit), onPressed: goToDraw),
+          IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: goToDraw,
+              tooltip: 'Dibujar Imagen'),
         ],
       ),
       body: SingleChildScrollView(
@@ -213,6 +223,9 @@ class TaskFormPageState extends State<TaskFormPage> {
     }
 
     _showMessage('Tarea Guardada!');
+
+    context.read<TaskProvider>().loadTaskList();
+
     Navigator.pop(context);
   }
 

@@ -11,7 +11,7 @@ class MyCustomPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint background = Paint()..color = Colors.white;
+    Paint background = Paint()..color = Colors.transparent;
     Rect rect = Rect.fromLTWH(0, 0, size.width, size.height);
 
     canvas.drawRect(rect, background);

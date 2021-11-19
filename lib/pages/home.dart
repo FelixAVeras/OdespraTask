@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:odespratask/models/Task.dart';
 import 'package:odespratask/providers/taskprovider.dart';
 
+import 'package:provider/provider.dart';
+
 class DrawingArea {
   Offset point;
   Paint areaPaint;
@@ -9,18 +11,34 @@ class DrawingArea {
   DrawingArea({this.point, this.areaPaint});
 }
 
-class HomePage extends StatelessWidget {
-  final taskProvider = new TaskProvider();
+class HomePage extends StatefulWidget {
+  // final taskProvider = new TaskProvider();
+  // context.read<TaskProvider>().loadTaskList();
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => context.read<TaskProvider>().loadTaskList());
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List listTasks = context.watch<TaskProvider>().tasks;
+    // context.read<TaskProvider>().loadTaskList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('ODESPRA Task'),
         centerTitle: true,
       ),
-      body: _taskList(),
+      body: _taskList(context, listTasks),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, 'newtask');
@@ -31,46 +49,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _taskList() {
-    return FutureBuilder(
-        future: taskProvider.loadTaskList(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<TaskModel>> snapshot) {
-          if (snapshot.hasData) {
-            final tasks = snapshot.data;
-
-            return RefreshIndicator(
-                child: ListView.builder(
-                    padding: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-                    itemCount: tasks.length,
-                    itemBuilder: (context, i) => taskItem(context, tasks[i]),
-                    physics: const AlwaysScrollableScrollPhysics()),
-                onRefresh: () {
-                  return Future.delayed(Duration(seconds: 1));
-                  () {
-                    _scaffoldKey.currentState.showSnackBar(SnackBar(
-                        content: const Text('Lista de tareas actualizada')));
-                  };
-                });
-            // return ListView.builder(
-            //     padding: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
-            //     itemCount: tasks.length,
-            //     itemBuilder: (context, i) => taskItem(context, tasks[i]));
-          } else {
-            return Center(
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text('Cargando Informacion...'),
-                    SizedBox(height: 10.0),
-                    LinearProgressIndicator()
-                  ],
-                ),
-              ),
-            );
-          }
-        });
+  Widget _taskList(BuildContext context, listTasks) {
+    return ListView.builder(
+        padding: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+        itemCount: listTasks.length,
+        itemBuilder: (context, i) => taskItem(context, listTasks[i]),
+        physics: const AlwaysScrollableScrollPhysics());
   }
 
   Widget taskItem(BuildContext context, TaskModel model) {
