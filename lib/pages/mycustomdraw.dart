@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:odespratask/helpers/mycustompaint.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
 
 class MyCustomDrawPage extends StatefulWidget {
   final File imagePhoto;
@@ -18,6 +21,8 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
   List<Offset> points = [];
   Color selectedColor;
   double strokeWidth;
+
+  ScreenshotController screenshotController = ScreenshotController();
 
   @override
   void initState() {
@@ -57,6 +62,20 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
     final double customWidth = MediaQuery.of(context).size.width;
     final double customHeight = MediaQuery.of(context).size.height;
 
+    Future<dynamic> ShowCapturedWidget(
+        BuildContext context, Uint8List capturedImage) {
+      return showDialog(
+        useSafeArea: false,
+        context: context,
+        builder: (context) => Scaffold(
+          body: Center(
+              child: capturedImage != null
+                  ? Image.memory(capturedImage)
+                  : Container()),
+        ),
+      );
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -66,9 +85,9 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                  Color.fromRGBO(75, 0, 130, 1.0),
-                  Color.fromRGBO(45, 0, 77, 1.0),
-                  Color.fromRGBO(15, 0, 26, 1.0)
+                  Color.fromRGBO(217, 217, 217, 1.0),
+                  Color.fromRGBO(217, 217, 217, 1.0),
+                  Color.fromRGBO(217, 217, 217, 1.0)
                 ])),
           ),
           Center(
@@ -82,51 +101,48 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
                     padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0),
                     width: customWidth * 0.95,
                     height: customHeight * 0.80,
-                    decoration: BoxDecoration(
-                        // image: DecorationImage(image: FileImage(widget.imagePhoto)),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.4),
-                              blurRadius: 5.0,
-                              spreadRadius: 1.0)
-                        ]),
                     child: Stack(
                       children: [
-                        Center(
-                          child: Image.file(widget.imagePhoto),
-                        ),
-                        Container(
-                          width: customWidth * 0.95,
-                          height: customHeight * 0.80,
-                          child: GestureDetector(
-                            onPanDown: (details) {
-                              this.setState(() {
-                                points.add(details.localPosition);
-                              });
-                            },
-                            onPanUpdate: (details) {
-                              this.setState(() {
-                                points.add(details.localPosition);
-                              });
-                            },
-                            onPanEnd: (details) {
-                              this.setState(() {
-                                points.add(null);
-                              });
-                            },
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              child: CustomPaint(
-                                painter: MyCustomPainter(
-                                    points: points,
-                                    color: selectedColor,
-                                    strokeWidth: strokeWidth),
-                              ),
-                            ),
-                          ),
-                        ),
+                        Screenshot(
+                            controller: screenshotController,
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Image.file(widget.imagePhoto),
+                                ),
+                                Container(
+                                  width: customWidth * 0.95,
+                                  height: customHeight * 0.80,
+                                  child: GestureDetector(
+                                    onPanDown: (details) {
+                                      this.setState(() {
+                                        points.add(details.localPosition);
+                                      });
+                                    },
+                                    onPanUpdate: (details) {
+                                      this.setState(() {
+                                        points.add(details.localPosition);
+                                      });
+                                    },
+                                    onPanEnd: (details) {
+                                      this.setState(() {
+                                        points.add(null);
+                                      });
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                      child: CustomPaint(
+                                        painter: MyCustomPainter(
+                                            points: points,
+                                            color: selectedColor,
+                                            strokeWidth: strokeWidth),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
                       ],
                     ),
                   ),
@@ -149,8 +165,8 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
                             }),
                         Expanded(
                             child: Slider(
-                          min: 1.0,
-                          max: 8.0,
+                          min: 2.0,
+                          max: 16.0,
                           activeColor: selectedColor,
                           value: strokeWidth,
                           onChanged: (value) {
@@ -169,14 +185,18 @@ class _MyCustomDrawPageState extends State<MyCustomDrawPage> {
                         IconButton(
                             icon: Icon(Icons.save_rounded),
                             onPressed: () {
-//                               final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
-// String fileName = DateTime.now().microsecondsSinceEpoch;
-// path = '$directory';
+                              // screenshotController
+                              //     .capture(delay: Duration(milliseconds: 10))
+                              //     .then((capturedImage) async {
+                              //   ShowCapturedWidget(context, capturedImage);
+                              // }).catchError((onError) {
+                              //   print(onError);
+                              // });
 
-// screenshotController.captureAndSave(
-//     path //set path where screenshot will be saved
-//     fileName:fileName
-// );
+                              screenshotController
+                                  .captureAndSave(widget.imagePhoto.path);
+
+                              Navigator.pop(context);
                             })
                       ],
                     ),
